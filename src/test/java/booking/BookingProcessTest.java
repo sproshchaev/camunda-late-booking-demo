@@ -93,7 +93,7 @@ class BookingProcessTest {
     }
 
     private void completeReservation(BookingAttempt attempt) {
-        client.newCompleteJobCommand(attempt.jobKey()).useGrpc().send().join();
+        client.newCompleteCommand(attempt.jobKey()).useGrpc().send().join();
     }
 
     private void handleLateConfirmation(long bookingId, Set<Long> recordedTimeouts) {
