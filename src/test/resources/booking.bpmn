@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+    xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+    xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+    id="bookingDefinitions" targetNamespace="https://prosoft.pages.dev/booking">
+  <bpmn:process id="booking" name="Бронирование" isExecutable="true">
+    <bpmn:startEvent id="start" />
+    <bpmn:serviceTask id="reserve" name="Получить подтверждение поставщика">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="reserve" />
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="timeout" name="Истек срок ожидания" attachedToRef="reserve" cancelActivity="true">
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration>PT5M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="booked" name="Бронь принята" />
+    <bpmn:endEvent id="timedOut" name="Заявка отменена" />
+    <bpmn:sequenceFlow id="startReserve" sourceRef="start" targetRef="reserve" />
+    <bpmn:sequenceFlow id="reserveBooked" sourceRef="reserve" targetRef="booked" />
+    <bpmn:sequenceFlow id="timeoutEnd" sourceRef="timeout" targetRef="timedOut" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="bookingDiagram">
+    <bpmndi:BPMNPlane id="bookingPlane" bpmnElement="booking">
+      <bpmndi:BPMNShape id="startShape" bpmnElement="start">
+        <dc:Bounds x="132" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="reserveShape" bpmnElement="reserve">
+        <dc:Bounds x="223" y="60" width="142" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="timeoutShape" bpmnElement="timeout">
+        <dc:Bounds x="276" y="122" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="bookedShape" bpmnElement="booked">
+        <dc:Bounds x="447" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="timedOutShape" bpmnElement="timedOut">
+        <dc:Bounds x="447" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="startReserveEdge" bpmnElement="startReserve">
+        <di:waypoint x="168" y="100" />
+        <di:waypoint x="223" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="reserveBookedEdge" bpmnElement="reserveBooked">
+        <di:waypoint x="365" y="100" />
+        <di:waypoint x="447" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="timeoutEndEdge" bpmnElement="timeoutEnd">
+        <di:waypoint x="294" y="158" />
+        <di:waypoint x="294" y="210" />
+        <di:waypoint x="447" y="210" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
